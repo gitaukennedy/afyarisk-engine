@@ -1,0 +1,23 @@
+# Python / Virtual Environment
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Data & Model Artifacts
+*.csv
+*.joblib
+*.pkl
+
+# Next.js / Node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Environment Variables & IDE
+.env
+.env.local
+.vscode/
+.idea/

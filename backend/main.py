@@ -6,7 +6,7 @@ Actuarial Health, Fraud & Loss Reserving Engine
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from schemas import (
+from backend.schemas import (
     HealthRiskRequest, HealthRiskResponse,
     PricingRequest, PricingResponse,
     FraudRequest, FraudResponse,
