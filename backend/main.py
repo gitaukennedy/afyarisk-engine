@@ -2,7 +2,15 @@
 AfyaRisk 2.0 — FastAPI Backend
 Actuarial Health, Fraud & Loss Reserving Engine
 """
+import sys
+from pathlib import Path
 
+# Add project root (afyarisk-engine) to sys.path
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
+# Now your existing imports will work cleanly:
+from schemas import HealthAssessmentInput, HealthAssessmentOutput # or relative import
+from engine.clinical_ml import predict_risk
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
