@@ -536,18 +536,132 @@ function PolicyTab() {
 
 // ─── Root Dashboard ────────────────────────────────────────────────────────────
 
+// ─── About Tab ────────────────────────────────────────────────────────────────
+
+function AboutTab() {
+  const problems = [
+    { title: 'Risk Mispricing',   desc: 'Underwriters price premiums using static age-based tables with no clinical data — leading to loss ratios exceeding 80%.' },
+    { title: 'Fraud Leakage',     desc: 'Manual claim review catches less than 30% of fraudulent submissions — costing African insurers billions annually.' },
+    { title: 'Reserve Delays',    desc: 'Actuaries calculate IBNR reserves quarterly in Excel — creating regulatory non-compliance risk and delayed disclosures.' },
+    { title: 'Policy Opacity',    desc: 'Agents answer policy questions by searching PDFs manually — slowing claims and degrading policyholder experience.' },
+    { title: 'Siloed Systems',    desc: "Each workflow runs independently with no shared risk signal — no unified view of a policyholder's true risk." },
+  ];
+
+  const engines = [
+    { num: '01', name: 'Clinical Risk',    tech: 'Random Forest',          desc: 'Scores patient biomarkers — Low / Medium / High risk tier + 3yr survival probability' },
+    { num: '02', name: 'Policy Pricing',   tech: 'Actuarial Pure Premium', desc: 'Risk-adjusted premium using (Frequency x Severity) / (1 - Loss Ratio - Expense Loading)' },
+    { num: '03', name: 'Fraud Detection',  tech: 'Isolation Forest',       desc: 'Anomaly detection on claims — 0 to 100% fraud score + APPROVE / REVIEW / REJECT' },
+    { num: '04', name: 'IBNR Reserving',   tech: 'Chain-Ladder',           desc: 'Projects ultimate losses from development triangles — reserve requirement per accident year' },
+    { num: '05', name: 'Policy RAG',       tech: 'FAISS + Transformers',   desc: 'Semantic vector search over policy documents — matched clauses in milliseconds' },
+  ];
+
+  return (
+    <div className="space-y-10">
+
+      {/* Hero */}
+      <div className="bg-white border border-[#e2e0db] rounded-xl p-8 shadow-sm">
+        <div className="flex items-start gap-6">
+          <div className="w-14 h-14 rounded-xl bg-[#0d6e4e] flex items-center justify-center flex-shrink-0">
+            <span className="text-white text-2xl font-bold">A</span>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-[#1a1a1a] tracking-tight mb-1">AfyaRisk 2.0</h2>
+            <p className="text-sm text-[#0d6e4e] font-semibold mb-3">Enterprise Insurtech & Actuarial AI Platform for Africa</p>
+            <p className="text-sm text-[#6b6860] leading-relaxed max-w-3xl">
+              <em>Afya</em> means <strong>health</strong> in Swahili. AfyaRisk 2.0 is an AI-powered actuarial engine
+              built specifically for the African health insurance market — unifying five critical workflows into a
+              single real-time API platform that any insurer can plug into their existing operations.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Problem */}
+      <div>
+        <h3 className="text-xs font-semibold text-[#6b6860] uppercase tracking-widest mb-4">The Problem</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {problems.map(p => (
+            <div key={p.title} className="bg-white border border-[#e2e0db] rounded-xl p-5 shadow-sm">
+              <h4 className="text-sm font-semibold text-[#1a1a1a] mb-2">{p.title}</h4>
+              <p className="text-xs text-[#6b6860] leading-relaxed">{p.desc}</p>
+            </div>
+          ))}
+          <div className="bg-red-50 border border-red-200 rounded-xl p-5 shadow-sm flex flex-col justify-center">
+            <p className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-1">The Result</p>
+            <p className="text-sm font-bold text-red-800 leading-relaxed">Mispriced risk pools · Fraud leakage · Delayed reserves · Underserved policyholders</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Solution */}
+      <div>
+        <h3 className="text-xs font-semibold text-[#6b6860] uppercase tracking-widest mb-4">The Solution — 5 Engines, 1 Platform</h3>
+        <div className="space-y-3">
+          {engines.map(e => (
+            <div key={e.num} className="bg-white border border-[#e2e0db] rounded-xl p-5 shadow-sm flex items-start gap-5">
+              <span className="text-2xl font-bold text-[#e2e0db] flex-shrink-0 w-8">{e.num}</span>
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-1">
+                  <h4 className="text-sm font-semibold text-[#1a1a1a]">{e.name}</h4>
+                  <span className="text-xs bg-[#f0faf5] text-[#0d6e4e] border border-emerald-200 px-2 py-0.5 rounded-full font-medium">{e.tech}</span>
+                </div>
+                <p className="text-xs text-[#6b6860] leading-relaxed">{e.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* What makes it different */}
+      <div className="bg-[#0d6e4e] rounded-xl p-8 text-white">
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-emerald-300 mb-5">What Makes AfyaRisk Different</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { label: 'Real-time',     desc: 'All five engines respond under 500ms via REST API' },
+            { label: 'Explainable',   desc: 'Every output includes reasoning — flags, factors, scores' },
+            { label: 'Integrated',    desc: 'Risk score feeds directly into premium calculation' },
+            { label: 'African-first', desc: 'Premiums in KES, ICD-10 codes for local disease burden' },
+            { label: 'API-first',     desc: 'Any insurer system integrates via standard REST endpoints' },
+            { label: 'No cold start', desc: 'RAG model preloaded at startup — instant first query' },
+          ].map(d => (
+            <div key={d.label}>
+              <p className="text-sm font-semibold text-white mb-1">{d.label}</p>
+              <p className="text-xs text-emerald-200 leading-relaxed">{d.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* IBM Bob */}
+      <div className="bg-white border border-[#e2e0db] rounded-xl p-6 shadow-sm">
+        <h3 className="text-xs font-semibold text-[#6b6860] uppercase tracking-widest mb-3">Built with IBM Bob</h3>
+        <p className="text-sm text-[#6b6860] leading-relaxed">
+          AfyaRisk 2.0 was engineered end-to-end using <strong className="text-[#1a1a1a]">IBM Bob</strong> as an
+          agentic AI software development assistant — covering architecture specification, backend ML engine
+          development, frontend dashboard, bug diagnosis, performance optimisation, deployment configuration,
+          and documentation. Every engine, every fix, every commit in this repository was produced through Bob.
+        </p>
+      </div>
+
+    </div>
+  );
+}
+
+// ─── Root Dashboard ────────────────────────────────────────────────────────────
+
 const TABS = [
-  { id: 'health',  label: 'Health Risk'      },
-  { id: 'pricing', label: 'Policy Pricing'   },
-  { id: 'fraud',   label: 'Fraud Detection'  },
-  { id: 'ibnr',    label: 'IBNR Reserving'   },
-  { id: 'policy',  label: 'Policy RAG'       },
+  { id: 'about',   label: 'About'           },
+  { id: 'health',  label: 'Health Risk'     },
+  { id: 'pricing', label: 'Policy Pricing'  },
+  { id: 'fraud',   label: 'Fraud Detection' },
+  { id: 'ibnr',    label: 'IBNR Reserving'  },
+  { id: 'policy',  label: 'Policy RAG'      },
 ] as const;
 
 type TabId = typeof TABS[number]['id'];
 
 export default function AfyaRiskDashboard() {
-  const [tab, setTab] = useState<TabId>('health');
+  const [tab, setTab] = useState<TabId>('about');
 
   return (
     <div className="min-h-screen bg-[#f8f7f4] text-[#1a1a1a] font-sans">
@@ -566,7 +680,7 @@ export default function AfyaRiskDashboard() {
           </div>
           <div className="flex items-center gap-2 text-xs text-[#6b6860] bg-[#f8f7f4] border border-[#e2e0db] px-3 py-1.5 rounded-lg hidden sm:flex">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
-            API live — localhost:8000
+            API live — railway.app
           </div>
         </div>
       </header>
@@ -589,6 +703,7 @@ export default function AfyaRiskDashboard() {
 
       {/* Content */}
       <main className="max-w-7xl mx-auto px-6 py-8">
+        {tab === 'about'   && <AboutTab />}
         {tab === 'health'  && <HealthTab />}
         {tab === 'pricing' && <PricingTab />}
         {tab === 'fraud'   && <FraudTab />}
@@ -599,7 +714,7 @@ export default function AfyaRiskDashboard() {
       {/* Footer */}
       <footer className="max-w-7xl mx-auto px-6 py-6 border-t border-[#e2e0db] mt-4">
         <p className="text-xs text-[#9c9890]">
-          AfyaRisk  · Random Forest · Isolation Forest · Chain-Ladder IBNR · FAISS RAG ·{' '}
+          AfyaRisk 2.0 · Random Forest · Isolation Forest · Chain-Ladder IBNR · FAISS RAG ·{' '}
           <span className="italic">Prototype — not certified actuarial advice</span>
         </p>
       </footer>
