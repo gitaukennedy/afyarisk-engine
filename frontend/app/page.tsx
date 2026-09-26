@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-const API = 'http://localhost:8000/api/v1';
+const API = (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000') + '/api/v1';
 
 // ─── Design tokens (light professional theme) ─────────────────────────────────
 // Surface:  #ffffff cards on #f8f7f4 background
