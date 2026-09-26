@@ -4,12 +4,17 @@ FAISS vector search over embedded health policy documents.
 Returns matched policy clauses for underwriter review.
 """
 
+import logging
+import threading
 import numpy as np
 
-# Lazy imports to avoid slow load at import time
+logger = logging.getLogger(__name__)
+
 _index = None
 _chunks = None
 _embedder = None
+_ready = False          # True once index is fully built
+_build_lock = threading.Lock()
 
 
 POLICY_DOCUMENTS = [
@@ -40,22 +45,35 @@ def _get_model():
 
 
 def _build_index():
-    global _index, _chunks
+    global _index, _chunks, _ready
     import faiss
 
-    model = _get_model()
-    _chunks = POLICY_DOCUMENTS
+    with _build_lock:
+        if _ready:          # another thread may have finished while we waited
+            return
+        logger.info("RAG: loading sentence-transformer model...")
+        model = _get_model()
+        _chunks = POLICY_DOCUMENTS
 
-    texts = [f"{title}: {text}" for title, text in _chunks]
-    embeddings = model.encode(texts, convert_to_numpy=True).astype("float32")
+        texts = [f"{title}: {text}" for title, text in _chunks]
+        logger.info("RAG: encoding %d policy documents...", len(texts))
+        embeddings = model.encode(texts, convert_to_numpy=True).astype("float32")
 
-    # L2-normalize for cosine similarity via inner product
-    faiss.normalize_L2(embeddings)
+        # L2-normalize for cosine similarity via inner product
+        faiss.normalize_L2(embeddings)
 
-    dim = embeddings.shape[1]
-    _index = faiss.IndexFlatIP(dim)
-    _index.add(embeddings)
-    return _index, _chunks
+        dim = embeddings.shape[1]
+        _index = faiss.IndexFlatIP(dim)
+        _index.add(embeddings)
+        _ready = True
+        logger.info("RAG: index ready — %d vectors, dim=%d", len(texts), dim)
+
+
+def preload():
+    """Call this at server startup to build the index in a background thread."""
+    t = threading.Thread(target=_build_index, daemon=True, name="rag-preload")
+    t.start()
+    return t
 
 
 def query_policy(query: str, top_k: int = 3) -> dict:
@@ -72,7 +90,9 @@ def query_policy(query: str, top_k: int = 3) -> dict:
     import faiss
 
     global _index, _chunks
-    if _index is None:
+    if not _ready:
+        # Still warming up — build synchronously (only happens if request arrives
+        # before the background preload thread has finished)
         _build_index()
 
     model = _get_model()

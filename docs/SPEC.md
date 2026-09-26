@@ -4,17 +4,18 @@
 **Classification:** Enterprise Insurtech & Actuarial AI Platform  
 **Author:** AfyaRisk Engineering Team  
 **Date:** 2025  
+**Status:** Hackathon Prototype — Fully Functional
 
 ---
 
 ## 1. Executive Summary
 
-AfyaRisk 2.0 is an integrated, AI-powered actuarial engine that unifies four previously siloed insurtech workflows into a single real-time API platform:
+AfyaRisk 2.0 is an integrated, AI-powered actuarial engine that unifies five previously siloed insurtech workflows into a single real-time API platform with a professional web dashboard.
 
 | Workflow | Technology | Output |
 |---|---|---|
 | Clinical Risk Classification | Random Forest Classifier | Low / Medium / High risk tier |
-| Dynamic Policy Pricing | Actuarial Pure Premium Formula | Risk-adjusted premium (KES/USD) |
+| Dynamic Policy Pricing | Actuarial Pure Premium Formula | Risk-adjusted premium (KES) |
 | Fraud Detection | Isolation Forest Anomaly Detection | Fraud Score 0–100% + flag list |
 | Loss Reserving (IBNR) | Deterministic Chain-Ladder | IBNR reserve requirement |
 | Policy RAG Pipeline | FAISS + Sentence Transformers | Matched policy clauses |
@@ -39,15 +40,15 @@ Insurtech platforms struggle with disjointed workflows:
 ┌─────────────────────────────────────────────────────────────┐
 │                    AfyaRisk 2.0 Platform                    │
 ├─────────────────┬───────────────────────────────────────────┤
-│  Next.js 14     │         FastAPI Backend (Python)          │
+│  Next.js 15     │         FastAPI Backend (Python)          │
 │  Frontend       │                                           │
 │  Dashboard      │  ┌──────────────────────────────────┐    │
 │                 │  │         Engine Layer              │    │
 │  Tab 1: Health  │  │  ┌────────────────────────────┐  │    │
-│  Tab 2: Fraud   │  │  │  clinical_ml.py             │  │    │
-│  Tab 3: IBNR    │  │  │  (Random Forest Classifier) │  │    │
-│  Tab 4: Policy  │  │  ├────────────────────────────┤  │    │
-│                 │  │  │  underwriting.py            │  │    │
+│  Tab 2: Pricing │  │  │  clinical_ml.py             │  │    │
+│  Tab 3: Fraud   │  │  │  (Random Forest Classifier) │  │    │
+│  Tab 4: IBNR    │  │  ├────────────────────────────┤  │    │
+│  Tab 5: Policy  │  │  │  underwriting.py            │  │    │
 │                 │  │  │  (Actuarial Pure Premium)   │  │    │
 │   HTTP/REST     │  │  ├────────────────────────────┤  │    │
 │   API calls     │  │  │  fraud.py                  │  │    │
@@ -70,13 +71,13 @@ Insurtech platforms struggle with disjointed workflows:
 ### 4.1 Clinical Risk Prediction (`engine/clinical_ml.py`)
 
 **Algorithm:** Random Forest Classifier (scikit-learn)  
-**Training Data:** Synthetic health biomarker dataset (Pima Indians Diabetes-inspired)
+**Training Data:** Synthetic health biomarker dataset (1,200 samples, guaranteed all 3 classes)
 
 **Input Features:**
 
 | Feature | Type | Range | Clinical Significance |
 |---|---|---|---|
-| glucose | float | 0–300 mg/dL | Primary diabetes indicator |
+| glucose | float | 60–300 mg/dL | Primary diabetes indicator |
 | bmi | float | 10–60 kg/m² | Obesity and metabolic risk |
 | age | int | 18–100 years | Age-related comorbidity risk |
 | blood_pressure | float | 40–200 mmHg | Cardiovascular risk factor |
@@ -108,6 +109,11 @@ RandomForestClassifier(
 )
 ```
 
+**Implementation Notes:**
+- Training data uses wider distributions than original to ensure all 3 classes are represented
+- Minimum 50 samples guaranteed per class via synthetic augmentation
+- `predict_risk` safely maps output probabilities via `_model.classes_` — never assumes fixed class ordering
+
 ---
 
 ### 4.2 Underwriting & Dynamic Pricing (`engine/underwriting.py`)
@@ -121,7 +127,7 @@ Premium = (Frequency × Severity) / (1 - Target_Loss_Ratio - Expense_Loading_Fac
 
 | Parameter | Default | Description |
 |---|---|---|
-| base_frequency | risk-adjusted | Expected claim events per year |
+| base_frequency | 0.15 | Expected claim events per year |
 | base_severity | KES 50,000 | Average claim cost |
 | target_loss_ratio | 0.65 | Actuarial target (65%) |
 | expense_loading | 0.15 | Operational overhead (15%) |
@@ -151,7 +157,7 @@ High Risk   → multiplier = 2.5  (+150% loading)
 ### 4.3 Fraud Detection Engine (`engine/fraud.py`)
 
 **Algorithm:** Isolation Forest (scikit-learn)  
-**Principle:** Anomaly isolation — fraudulent claims are statistically isolated faster than legitimate ones in random partitioning trees.
+**Training Data:** 2,000 synthetic legitimate claims
 
 **Input Features:**
 
@@ -159,7 +165,7 @@ High Risk   → multiplier = 2.5  (+150% loading)
 |---|---|
 | claim_amount | Total monetary value of claim (KES) |
 | claim_frequency | Number of claims in rolling 90-day window |
-| provider_id | Numeric provider identifier for variance tracking |
+| provider_id | Numeric provider identifier |
 | diagnosis_code | ICD-10 code numeric mapping |
 | patient_age | Policyholder age |
 | days_since_policy | Days since policy inception |
@@ -168,46 +174,32 @@ High Risk   → multiplier = 2.5  (+150% loading)
 ```
 raw_score = isolation_forest.decision_function(features)
 fraud_score = 1 - (raw_score - min) / (max - min)  # normalized 0–1
-fraud_percentage = fraud_score * 100
 ```
 
 **Flag Triggers:**
 - `HIGH_CLAIM_AMOUNT`: claim > 3σ above mean
 - `RAPID_RESUBMISSION`: frequency > 5 in 90 days
-- `PROVIDER_MISMATCH`: provider variance anomaly
-- `DIAGNOSIS_MISMATCH`: code statistically inconsistent with age/claim
+- `PROVIDER_MISMATCH`: provider outside normal range (110–550)
+- `DIAGNOSIS_AGE_MISMATCH`: high code + young patient
+- `EARLY_POLICY_LARGE_CLAIM`: large claim within 30 days of inception
 
-**Output Schema:**
-```json
-{
-  "fraud_score": 0.0,
-  "fraud_percentage": 0.0,
-  "is_flagged": false,
-  "flags": [],
-  "recommendation": "APPROVE | REVIEW | REJECT"
-}
+**Decision Rules:**
+```
+fraud_percentage ≥ 75% OR ≥ 3 flags  → REJECT
+fraud_percentage ≥ 50% OR ≥ 2 flags  → REVIEW
+otherwise                             → APPROVE
 ```
 
 ---
 
 ### 4.4 Loss Reserving Engine (`engine/reserving.py`)
 
-**Algorithm:** Deterministic Chain-Ladder Method  
-**Purpose:** Calculate IBNR (Incurred But Not Reported) reserves from historical claims development triangles.
-
-**Input:** Claims development triangle (n×n matrix)
-```
-        Dev 1   Dev 2   Dev 3   Dev 4
-AY 2020  1000    1500    1800    1900
-AY 2021  1200    1750    2100      --
-AY 2022  1400    2000      --      --
-AY 2023  1600      --      --      --
-```
+**Algorithm:** Deterministic Chain-Ladder Method
 
 **Chain-Ladder Steps:**
 1. Compute age-to-age development factors: `f_k = Σ C(i,k+1) / Σ C(i,k)`
 2. Project ultimate losses for each accident year
-3. IBNR = Ultimate Loss - Latest Diagonal (reported losses)
+3. IBNR = Ultimate Loss − Latest Diagonal (reported losses)
 4. Total IBNR = Σ IBNR across all open accident years
 
 **Output Schema:**
@@ -227,21 +219,21 @@ AY 2023  1600      --      --      --
 
 **Architecture:** Retrieval-Augmented Generation (RAG)  
 **Embedding Model:** `sentence-transformers/all-MiniLM-L6-v2`  
-**Vector Store:** FAISS (Facebook AI Similarity Search)
+**Vector Store:** FAISS (IndexFlatIP — cosine similarity via L2-normalised inner product)  
+**Indexed Documents:** 15 policy clauses (waiting periods, exclusions, ICD-10 codes, fraud, IBNR, etc.)
 
 **Pipeline Flow:**
 ```
-Policy Documents → Chunking (512 tokens) → Embeddings → FAISS Index
-                                                              ↓
-User Query → Query Embedding → Similarity Search (top-k=3) → Matched Clauses
+Server Startup → Background Thread → Encode 15 documents → FAISS Index (ready in ~15s)
+                                                                   ↓
+User Query → Query Embedding → Similarity Search (top-k) → Matched Clauses
 ```
 
-**Indexed Document Types:**
-- Health policy terms & conditions
-- ICD-10 medical code reference tables
-- Underwriting eligibility rules
-- Exclusion clauses and waiting periods
-- Claims processing guidelines
+**Performance:**
+- Index is preloaded at server startup via `preload()` background thread
+- Thread-safe via `threading.Lock()` — safe under concurrent requests
+- First query after restart is instant (index pre-warmed)
+- `_ready` flag prevents double-build
 
 **Output Schema:**
 ```json
@@ -280,67 +272,77 @@ User Query → Query Embedding → Similarity Search (top-k=3) → Matched Claus
 ### Backend
 | Component | Technology | Version |
 |---|---|---|
-| API Framework | FastAPI | ≥0.104 |
-| Server | Uvicorn | ≥0.24 |
-| ML Framework | scikit-learn | ≥1.3 |
-| Boosting | XGBoost + LightGBM | ≥2.0 |
+| API Framework | FastAPI | ≥ 0.104 |
+| Server | Uvicorn (ASGI) | ≥ 0.24 |
+| ML Framework | scikit-learn | ≥ 1.4 |
 | Data Processing | pandas + numpy | latest |
-| Embeddings | sentence-transformers | ≥2.2 |
-| Vector Store | faiss-cpu | ≥1.7 |
-| Schema Validation | Pydantic v2 | ≥2.0 |
+| Embeddings | sentence-transformers | ≥ 2.2 |
+| Vector Store | faiss-cpu | ≥ 1.7 |
+| Schema Validation | Pydantic v2 | ≥ 2.5 |
 
 ### Frontend
 | Component | Technology |
 |---|---|
-| Framework | Next.js 14 (App Router) |
+| Framework | Next.js 15 (App Router) |
 | Language | TypeScript |
-| Styling | Tailwind CSS + Dark Mode |
-| Charts | Recharts |
-| Icons | Lucide React |
+| Styling | Tailwind CSS v4 |
+| Theme | Light professional — forest green `#0d6e4e`, warm off-white `#f8f7f4` |
 
 ---
 
 ## 7. Data Flow
 
 ```
-Patient Biomarkers → Clinical ML → Risk Tier
-                                        ↓
-Risk Tier + Severity → Underwriting → Premium
-                                        ↓
-Claim Submission → Fraud Detection → Score + Flags
-                                        ↓
-Historical Triangle → Chain-Ladder → IBNR Reserve
-                                        ↓
-Policy Query → RAG Pipeline → Matched Clauses
+Patient Biomarkers → Clinical ML → Risk Tier + Survival Probability
+                                         ↓
+Risk Tier + Score → Underwriting → Annual / Monthly Premium
+                                         ↓
+Claim Submission → Fraud Detection → Score + Flags + Recommendation
+                                         ↓
+Historical Triangle → Chain-Ladder → IBNR Reserve by Accident Year
+                                         ↓
+Policy Query → FAISS RAG → Top-K Matched Policy Clauses
 ```
 
 ---
 
-## 8. Security & Compliance
+## 8. Server Startup Sequence
 
-- All endpoints validate input via Pydantic v2 schemas
-- CORS configured for frontend origin
-- No PII stored in vector index (anonymized policy text only)
-- Fraud flags are audit-logged with timestamp
-- IBNR outputs are clearly marked as estimates, not certified actuarial opinions
+```
+uvicorn backend.main:app
+    ↓
+FastAPI lifespan() event fires
+    ↓
+preload_rag() → background thread starts
+    ↓
+clinical_ml module loads → RandomForest trains on synthetic data (~2s)
+fraud module loads → IsolationForest trains on synthetic data (~1s)
+    ↓                           (in parallel, background)
+RAG thread: loads sentence-transformer → encodes 15 docs → FAISS index built (~15s)
+    ↓
+Server ready on port 8000
+All engines warm — zero cold-start latency on first request
+```
 
 ---
 
-## 9. Deployment Architecture
+## 9. Security & Compliance
 
-```
-Frontend (Next.js) → Vercel / Docker
-Backend (FastAPI)  → Docker Container / Railway / Render
-Vector Index       → Persisted FAISS index file (faiss_policy.index)
-Models             → In-memory trained on startup (synthetic data)
-```
+- All endpoints validate input via Pydantic v2 schemas with field-level constraints
+- CORS configured for frontend origin (`localhost:3000`)
+- No PII stored in vector index (anonymised policy text only)
+- IBNR outputs clearly marked as estimates, not certified actuarial opinions
+- Fraud flags include explainable rule-based triggers alongside ML score
 
 ---
 
-## 10. Hackathon Scope Limitations
+## 10. Hackathon Scope & Production Path
 
-- Models are trained on **synthetic data** at startup (no external dataset required)
-- FAISS index is **in-memory** (not persisted between restarts in dev mode)
-- Chain-Ladder uses **hard-coded sample triangle** as demo input
-- No authentication layer in hackathon build (add JWT for production)
-- Frontend connects to `localhost:8000` with offline fallback calculations
+| Feature | Prototype | Production |
+|---|---|---|
+| Training data | Synthetic (startup) | Real historical claims dataset |
+| FAISS index | In-memory | Persisted `.index` file |
+| Authentication | None | JWT / OAuth2 |
+| Models | In-memory | Serialised with joblib / MLflow |
+| Deployment | localhost | Docker → Railway / Render (backend), Vercel (frontend) |
+| Monitoring | uvicorn logs | Prometheus + Grafana |

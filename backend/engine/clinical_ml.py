@@ -10,26 +10,44 @@ from sklearn.preprocessing import StandardScaler
 
 
 def _build_synthetic_training_data():
-    """Generate synthetic biomarker training data."""
+    """Generate synthetic biomarker training data — all 3 risk classes guaranteed."""
     rng = np.random.RandomState(42)
-    n = 1000
+    n = 1200
 
-    glucose = rng.normal(120, 40, n).clip(60, 300)
-    bmi = rng.normal(28, 7, n).clip(15, 60)
-    age = rng.normal(45, 15, n).clip(18, 90)
-    blood_pressure = rng.normal(80, 15, n).clip(40, 140)
-    insulin = rng.normal(80, 60, n).clip(0, 500)
+    # Spread distributions wide enough to produce Low, Medium AND High examples
+    glucose = rng.normal(130, 60, n).clip(60, 300)
+    bmi = rng.normal(30, 10, n).clip(15, 60)
+    age = rng.normal(50, 20, n).clip(18, 90)
+    blood_pressure = rng.normal(85, 20, n).clip(40, 200)
+    insulin = rng.normal(100, 80, n).clip(0, 900)
 
     # Synthetic risk label: weighted clinical heuristic
     risk_score_raw = (
         (glucose - 70) / 230 * 0.35
         + (bmi - 18) / 42 * 0.25
         + (age - 18) / 72 * 0.20
-        + (blood_pressure - 40) / 100 * 0.10
-        + (insulin / 500) * 0.10
+        + (blood_pressure - 40) / 160 * 0.10
+        + (insulin / 900) * 0.10
     )
 
     labels = np.where(risk_score_raw < 0.35, 0, np.where(risk_score_raw < 0.65, 1, 2))
+
+    # Guarantee at least 50 samples of each class so the model learns all 3 tiers
+    for cls, lo, hi in [(0, 0.0, 0.34), (1, 0.35, 0.64), (2, 0.65, 1.0)]:
+        needed = max(0, 50 - int((labels == cls).sum()))
+        if needed:
+            extra_scores = rng.uniform(lo, hi, needed)
+            extra_glucose = 70 + extra_scores * 230
+            extra_bmi = np.full(needed, 25.0)
+            extra_age = np.full(needed, 45.0)
+            extra_bp = np.full(needed, 80.0)
+            extra_insulin = np.full(needed, 50.0)
+            glucose = np.append(glucose, extra_glucose)
+            bmi = np.append(bmi, extra_bmi)
+            age = np.append(age, extra_age)
+            blood_pressure = np.append(blood_pressure, extra_bp)
+            insulin = np.append(insulin, extra_insulin)
+            labels = np.append(labels, np.full(needed, cls))
 
     X = np.column_stack([glucose, bmi, age, blood_pressure, insulin])
     return X, labels
@@ -66,11 +84,15 @@ def predict_risk(glucose: float, bmi: float, age: int, blood_pressure: float, in
     features_scaled = _scaler.transform(features)
 
     proba = _model.predict_proba(features_scaled)[0]  # [P_low, P_med, P_high]
-    predicted_class = int(np.argmax(proba))
-    tier = _TIER_MAP[predicted_class]
+    predicted_class = int(_model.classes_[int(np.argmax(proba))])
+    tier = _TIER_MAP.get(predicted_class, "Medium")
+
+    # Build full 3-class probability array safely regardless of classes learned
+    classes = list(_model.classes_)
+    p = [float(proba[classes.index(c)]) if c in classes else 0.0 for c in [0, 1, 2]]
 
     # Composite risk score (weighted toward high-risk probability)
-    risk_score = float(proba[1] * 0.4 + proba[2] * 1.0)
+    risk_score = float(p[1] * 0.4 + p[2] * 1.0)
     risk_score = min(risk_score, 1.0)
 
     # Survival probability inversely related to risk

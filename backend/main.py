@@ -2,15 +2,9 @@
 AfyaRisk 2.0 — FastAPI Backend
 Actuarial Health, Fraud & Loss Reserving Engine
 """
-import sys
-from pathlib import Path
+import logging
+from contextlib import asynccontextmanager
 
-# Add project root (afyarisk-engine) to sys.path
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-
-# Now your existing imports will work cleanly:
-from schemas import HealthAssessmentInput, HealthAssessmentOutput # or relative import
-from engine.clinical_ml import predict_risk
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -21,11 +15,23 @@ from backend.schemas import (
     IBNRRequest, IBNRResponse,
     PolicyQueryRequest, PolicyQueryResponse,
 )
-from engine.clinical_ml import predict_risk
-from engine.underwriting import calculate_premium
-from engine.fraud import detect_fraud
-from engine.reserving import calculate_ibnr, SAMPLE_TRIANGLE
-from engine.rag_policy import query_policy
+from backend.engine.clinical_ml import predict_risk
+from backend.engine.underwriting import calculate_premium
+from backend.engine.fraud import detect_fraud
+from backend.engine.reserving import calculate_ibnr, SAMPLE_TRIANGLE
+from backend.engine.rag_policy import query_policy, preload as preload_rag
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Kick off RAG model + index build in a background thread at startup
+    logger.info("AfyaRisk startup: preloading RAG index...")
+    preload_rag()
+    yield
+    # (shutdown cleanup if needed in future)
+
 
 app = FastAPI(
     title="AfyaRisk 2.0",
@@ -33,6 +39,7 @@ app = FastAPI(
     version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
