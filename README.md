@@ -12,9 +12,9 @@ AfyaRisk 2.0 is a fully functional prototype that unifies five previously siloed
 
 | Service | URL |
 |---|---|
-| Frontend Dashboard | http://localhost:3000 |
-| Backend API | http://localhost:8000 |
-| Interactive API Docs | http://localhost:8000/docs |
+| Frontend Dashboard | https://afyarisk-engine.vercel.app *(deploying — see Vercel steps below)* |
+| Backend API | https://afyarisk-engine-production.up.railway.app ✅ Live |
+| Interactive API Docs | https://afyarisk-engine-production.up.railway.app/docs ✅ Live |
 
 ---
 
