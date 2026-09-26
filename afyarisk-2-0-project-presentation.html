@@ -1,0 +1,387 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AfyaRisk 2.0 — Project Presentation</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",system-ui,sans-serif;background:#f8f7f4;color:#1a1a1a;font-size:14px;line-height:1.6}
+  .page{width:100%;max-width:860px;margin:0 auto;padding:32px 24px}
+
+  /* ── Cover ── */
+  .cover{background:#0d6e4e;color:#fff;min-height:320px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:56px 64px;border-radius:16px;margin-bottom:40px;position:relative;overflow:hidden}
+  .cover::before{content:'';position:absolute;right:-60px;top:-60px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.05)}
+  .cover::after{content:'';position:absolute;right:60px;bottom:-80px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.04)}
+  .cover-badge{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#86efac;margin-bottom:16px}
+  .cover-logo{width:56px;height:56px;background:rgba(255,255,255,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;margin-bottom:20px;border:2px solid rgba(255,255,255,0.2)}
+  .cover h1{font-size:42px;font-weight:800;letter-spacing:-1px;margin-bottom:8px}
+  .cover-sub{font-size:16px;color:#bbf7d0;font-weight:500;margin-bottom:28px}
+  .cover-tagline{font-size:13px;color:rgba(255,255,255,0.7);max-width:480px;line-height:1.7}
+  .cover-meta{margin-top:32px;display:flex;gap:32px;font-size:12px;color:#86efac}
+  .cover-meta span{display:flex;flex-direction:column;gap:2px}
+  .cover-meta strong{color:#fff;font-size:13px}
+
+  /* ── Section headings ── */
+  .section{background:#fff;border:1px solid #e2e0db;border-radius:14px;padding:36px 40px;margin-bottom:28px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+  .section-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#9c9890;margin-bottom:6px}
+  .section-num{font-size:11px;font-weight:700;color:#0d6e4e;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+  .section h2{font-size:22px;font-weight:700;color:#1a1a1a;margin-bottom:16px;letter-spacing:-0.3px}
+  .section h3{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:10px}
+  .section p{color:#6b6860;font-size:13.5px;line-height:1.75;margin-bottom:12px}
+  .section p:last-child{margin-bottom:0}
+
+  /* ── Grid cards ── */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:20px}
+  .card{background:#f8f7f4;border:1px solid #e2e0db;border-radius:10px;padding:18px 20px}
+  .card h4{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:6px}
+  .card p{font-size:12px;color:#6b6860;line-height:1.65;margin:0}
+  .card.red{background:#fff5f5;border-color:#fecaca}
+  .card.red h4{color:#dc2626}
+  .card.green{background:#f0faf5;border-color:#bbf7d0}
+  .card.green h4{color:#0d6e4e}
+
+  /* ── Engine rows ── */
+  .engine-row{display:flex;align-items:flex-start;gap:20px;padding:16px 20px;background:#f8f7f4;border:1px solid #e2e0db;border-radius:10px;margin-bottom:10px}
+  .engine-num{font-size:22px;font-weight:800;color:#e2e0db;min-width:36px;line-height:1}
+  .engine-body{flex:1}
+  .engine-body h4{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+  .engine-body p{font-size:12px;color:#6b6860;margin:0;line-height:1.6}
+  .tag{display:inline-block;background:#f0faf5;color:#0d6e4e;border:1px solid #bbf7d0;border-radius:20px;font-size:10px;font-weight:700;padding:2px 10px;margin-left:8px;vertical-align:middle}
+
+  /* ── Dark block ── */
+  .dark-block{background:#0d6e4e;border-radius:14px;padding:36px 40px;margin-bottom:28px;color:#fff}
+  .dark-block .section-label{color:#86efac}
+  .dark-block h2{color:#fff;font-size:22px;font-weight:700;margin-bottom:20px;letter-spacing:-0.3px}
+  .dark-block .grid3{margin-top:0}
+  .dark-block .d-card{padding:0}
+  .dark-block .d-card h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+  .dark-block .d-card p{font-size:12px;color:#bbf7d0;margin:0;line-height:1.65}
+
+  /* ── Tools table ── */
+  table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12.5px}
+  th{text-align:left;padding:8px 12px;background:#f8f7f4;color:#6b6860;font-weight:700;font-size:11px;letter-spacing:1px;text-transform:uppercase;border-bottom:2px solid #e2e0db}
+  td{padding:10px 12px;border-bottom:1px solid #f0ede8;color:#1a1a1a;vertical-align:top}
+  td:first-child{font-weight:600;color:#0d6e4e;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+
+  /* ── Screenshots placeholder ── */
+  .screenshot-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+  .screenshot-box{background:#f8f7f4;border:2px dashed #e2e0db;border-radius:10px;height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+  .screenshot-box .ss-label{font-size:11px;font-weight:700;color:#9c9890;letter-spacing:1px;text-transform:uppercase}
+  .screenshot-box .ss-hint{font-size:10px;color:#c0bdb8;text-align:center;max-width:160px;line-height:1.5}
+  .screenshot-icon{width:36px;height:36px;background:#e2e0db;border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .screenshot-icon svg{width:18px;height:18px;stroke:#9c9890;fill:none;stroke-width:1.5}
+
+  /* ── Bob section ── */
+  .bob-row{display:flex;gap:14px;padding:14px 16px;border-bottom:1px solid #f0ede8}
+  .bob-row:last-child{border-bottom:none}
+  .bob-phase{font-size:11px;font-weight:700;color:#0d6e4e;min-width:140px;padding-top:1px}
+  .bob-desc{font-size:12.5px;color:#6b6860;line-height:1.65}
+
+  /* ── Footer ── */
+  .doc-footer{text-align:center;padding:28px 0 8px;border-top:1px solid #e2e0db;margin-top:8px;color:#9c9890;font-size:11px}
+
+  /* Print */
+  @media print{body{background:#fff}.page{padding:16px}.section,.dark-block{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  
+  <div class="cover">
+    <div class="cover-badge">Hackathon Submission · 2025</div>
+    <div class="cover-logo">A</div>
+    <h1>AfyaRisk 2.0</h1>
+    <div class="cover-sub">Enterprise Insurtech &amp; Actuarial AI Platform</div>
+    <div class="cover-tagline">
+      An AI-powered actuarial engine for the African health insurance market — unifying clinical risk scoring,
+      fraud detection, loss reserving, dynamic pricing, and policy intelligence into a single real-time platform.
+    </div>
+    <div class="cover-meta">
+      <span><strong>Category</strong>Assistant / Agent Builder</span>
+      <span><strong>Stack</strong>FastAPI · Next.js · scikit-learn · FAISS</span>
+      <span><strong>Built with</strong>IBM Bob</span>
+      <span><strong>Deployed</strong>Railway · Vercel</span>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-num">Section 01</div>
+    <h2>Introduction</h2>
+    <p>
+      <em>Afya</em> means <strong>health</strong> in Swahili. AfyaRisk 2.0 is an AI-powered actuarial engine built
+      specifically for the African health insurance market. Health insurers across East Africa operate five disconnected
+      workflows using outdated tools — static pricing tables, manual fraud review, quarterly Excel reserving, and PDF
+      policy searches — with no unified risk intelligence layer.
+    </p>
+    <p>
+      AfyaRisk 2.0 replaces all five with a single, real-time API platform. Any insurer — from a Nairobi-based microinsurer
+      to a regional reinsurer — can integrate the five engines through standard REST endpoints and get clinical-grade
+      risk intelligence in under 500 milliseconds.
+    </p>
+    <div class="grid2">
+      <div class="card green">
+        <h4>Target Users</h4>
+        <p>Health insurers, reinsurers, actuarial teams, TPA administrators, and insurtech platforms across East and Central Africa.</p>
+      </div>
+      <div class="card green">
+        <h4>Core Value</h4>
+        <p>One unified API replacing five siloed tools — lower loss ratios, less fraud leakage, faster reserves, better policyholder experience.</p>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-num">Section 02</div>
+    <h2>The Problem</h2>
+    <p>Insurance in Africa is broken at the data layer. Five critical workflows run in silos with no shared intelligence:</p>
+    <div class="grid3">
+      <div class="card">
+        <h4>Risk Mispricing</h4>
+        <p>Underwriters use static age-based tables with no clinical data. Loss ratios exceed 80% across the region.</p>
+      </div>
+      <div class="card">
+        <h4>Fraud Leakage</h4>
+        <p>Manual review catches less than 30% of fraudulent claims. Billions lost to undetected anomalies annually.</p>
+      </div>
+      <div class="card">
+        <h4>Reserve Delays</h4>
+        <p>Actuaries calculate IBNR reserves quarterly in spreadsheets — creating regulatory non-compliance risk.</p>
+      </div>
+      <div class="card">
+        <h4>Policy Opacity</h4>
+        <p>Agents answer policyholder questions by manually searching PDFs — slow, inconsistent, and error-prone.</p>
+      </div>
+      <div class="card">
+        <h4>Siloed Systems</h4>
+        <p>Each workflow runs independently. No shared risk signal. No unified view of a policyholder's true exposure.</p>
+      </div>
+      <div class="card red">
+        <h4>The Result</h4>
+        <p>Mispriced risk pools · Fraud leakage · Delayed reserves · Regulatory penalties · Underserved policyholders.</p>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-num">Section 03</div>
+    <h2>The Solution — 5 Engines, 1 Platform</h2>
+    <p>AfyaRisk 2.0 replaces five siloed workflows with one unified API platform. The outputs of each engine feed the next:</p>
+
+    <div style="margin-top:20px">
+      <div class="engine-row">
+        <div class="engine-num">01</div>
+        <div class="engine-body">
+          <h4>Clinical Risk Scoring <span class="tag">Random Forest</span></h4>
+          <p>Patient biomarkers (glucose, BMI, age, blood pressure, insulin) → Low / Medium / High risk tier + 3-year survival probability + health degradation estimate.</p>
+        </div>
+      </div>
+      <div class="engine-row">
+        <div class="engine-num">02</div>
+        <div class="engine-body">
+          <h4>Dynamic Policy Pricing <span class="tag">Actuarial Pure Premium</span></h4>
+          <p>Risk tier + score → Premium = (Frequency × Severity) / (1 − Loss Ratio − Expense Loading). Risk multipliers: Low 1.0×, Medium 1.5×, High 2.5×.</p>
+        </div>
+      </div>
+      <div class="engine-row">
+        <div class="engine-num">03</div>
+        <div class="engine-body">
+          <h4>Fraud Detection <span class="tag">Isolation Forest</span></h4>
+          <p>Claim features → 0–100% fraud score + explainable rule-based flags (HIGH_CLAIM_AMOUNT, RAPID_RESUBMISSION, EARLY_POLICY_LARGE_CLAIM) → APPROVE / REVIEW / REJECT.</p>
+        </div>
+      </div>
+      <div class="engine-row">
+        <div class="engine-num">04</div>
+        <div class="engine-body">
+          <h4>IBNR Loss Reserving <span class="tag">Chain-Ladder</span></h4>
+          <p>Historical claims development triangle → age-to-age factors → projected ultimate losses → IBNR reserve requirement per accident year.</p>
+        </div>
+      </div>
+      <div class="engine-row" style="margin-bottom:0">
+        <div class="engine-num">05</div>
+        <div class="engine-body">
+          <h4>Policy RAG Search <span class="tag">FAISS + Sentence Transformers</span></h4>
+          <p>Natural language query → all-MiniLM-L6-v2 embedding → FAISS cosine similarity search → top-K matched policy clauses with similarity scores.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="dark-block">
+    <div class="section-label">Section 04</div>
+    <h2>Methodology</h2>
+    <div class="grid3">
+      <div class="d-card">
+        <h4>ML Training</h4>
+        <p>All models trained on synthetic data generated at server startup — no external dataset required. 1,200 biomarker samples guarantee all 3 risk classes with minimum 50 samples each.</p>
+      </div>
+      <div class="d-card">
+        <h4>Actuarial Formula</h4>
+        <p>Pure premium methodology with configurable loss ratio (default 65%) and expense loading (default 15%). Risk-score fine-tuning applied on top of tier multiplier.</p>
+      </div>
+      <div class="d-card">
+        <h4>Fraud Scoring</h4>
+        <p>Isolation Forest score normalized 0–1 using training data min/max. Rule-based flags applied as a second layer for explainability alongside the ML score.</p>
+      </div>
+      <div class="d-card">
+        <h4>Chain-Ladder</h4>
+        <p>Deterministic development factors computed as weighted column ratios. Triangle projected column-by-column. IBNR = Ultimate − Latest Diagonal per accident year.</p>
+      </div>
+      <div class="d-card">
+        <h4>RAG Pipeline</h4>
+        <p>15 policy documents embedded at server startup in a background thread via threading.Lock(). FAISS IndexFlatIP with L2-normalized vectors for cosine similarity. Zero cold-start on first query.</p>
+      </div>
+      <div class="d-card">
+        <h4>API Design</h4>
+        <p>FastAPI with Pydantic v2 schema validation, field-level constraints, lifespan events for startup tasks, and CORS configured for the frontend origin.</p>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-num">Section 05</div>
+    <h2>Tools &amp; Technology Stack</h2>
+    <table>
+      <tr><th>Component</th><th>Technology</th><th>Purpose</th></tr>
+      <tr><td>API Framework</td><td>FastAPI 0.104+</td><td>REST API with async support, Swagger docs, lifespan events</td></tr>
+      <tr><td>Server</td><td>Uvicorn (ASGI)</td><td>Production-grade ASGI server with auto-reload</td></tr>
+      <tr><td>Clinical Risk ML</td><td>scikit-learn RandomForestClassifier</td><td>100 estimators, max_depth=8, synthetic biomarker training</td></tr>
+      <tr><td>Fraud Detection ML</td><td>scikit-learn IsolationForest</td><td>200 estimators, 5% contamination, calibrated score normalization</td></tr>
+      <tr><td>Actuarial Engine</td><td>NumPy + pure Python</td><td>Pure premium formula + Chain-Ladder IBNR projection</td></tr>
+      <tr><td>Embeddings</td><td>sentence-transformers all-MiniLM-L6-v2</td><td>384-dim semantic embeddings for policy document search</td></tr>
+      <tr><td>Vector Store</td><td>FAISS IndexFlatIP</td><td>Exact cosine similarity search over L2-normalized embeddings</td></tr>
+      <tr><td>Schema Validation</td><td>Pydantic v2</td><td>Request/response validation with field-level constraints</td></tr>
+      <tr><td>Frontend Framework</td><td>Next.js 15 (App Router)</td><td>Server-side rendering, TypeScript, hot module reload</td></tr>
+      <tr><td>Styling</td><td>Tailwind CSS v4</td><td>Utility-first CSS with custom forest green brand tokens</td></tr>
+      <tr><td>Backend Deployment</td><td>Railway</td><td>Auto-deploy from GitHub, nixpacks build, no sleep on free tier</td></tr>
+      <tr><td>Frontend Deployment</td><td>Vercel</td><td>Edge-optimized Next.js hosting with env variable injection</td></tr>
+      <tr><td>Version Control</td><td>Git + GitHub</td><td>Full commit history from initial scaffold to production</td></tr>
+      <tr><td>AI Engineering</td><td>IBM Bob</td><td>Agentic SDLC assistant — spec, code, debug, deploy, docs</td></tr>
+    </table>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-num">Section 06</div>
+    <h2>Screenshots</h2>
+    <p style="margin-bottom:4px">Live dashboard running at <strong>https://afyarisk-engine-production.up.railway.app</strong></p>
+    <p style="font-size:12px;color:#9c9890;margin-bottom:0">Take screenshots of each tab and paste them below before printing to PDF.</p>
+    <div class="screenshot-grid">
+      <div class="screenshot-box">
+        <div class="screenshot-icon">
+          <svg><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path></svg>
+        </div>
+        <div class="ss-label">About Tab</div>
+        <div class="ss-hint">Problem, Solution &amp; IBM Bob section</div>
+      </div>
+      <div class="screenshot-box">
+        <div class="screenshot-icon">
+          <svg><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+        </div>
+        <div class="ss-label">Health Risk Tab</div>
+        <div class="ss-hint">Biomarker input + risk tier result + premium cards</div>
+      </div>
+      <div class="screenshot-box">
+        <div class="screenshot-icon">
+          <svg><circle cx="12" cy="12" r="9"></circle><path d="M12 8v4l3 3"></path></svg>
+        </div>
+        <div class="ss-label">Fraud Detection Tab</div>
+        <div class="ss-hint">High fraud score + triggered flags + REJECT recommendation</div>
+      </div>
+      <div class="screenshot-box">
+        <div class="screenshot-icon">
+          <svg><path d="M3 3h18v18H3z"></path><path d="M3 9h18M9 3v18"></path></svg>
+        </div>
+        <div class="ss-label">IBNR Reserving Tab</div>
+        <div class="ss-hint">Development factors + accident year table + total reserve</div>
+      </div>
+      <div class="screenshot-box">
+        <div class="screenshot-icon">
+          <svg><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <div class="ss-label">Policy RAG Tab</div>
+        <div class="ss-hint">Natural language query + matched policy clauses</div>
+      </div>
+      <div class="screenshot-box">
+        <div class="screenshot-icon">
+          <svg><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14,2 14,8 20,8"></polyline></svg>
+        </div>
+        <div class="ss-label">API Docs (/docs)</div>
+        <div class="ss-hint">Swagger UI showing all 5 endpoints live on Railway</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-num">Section 07</div>
+    <h2>IBM Bob — Agentic SDLC Integration</h2>
+    <p>AfyaRisk 2.0 was engineered end-to-end using IBM Bob as the primary agentic AI assistant across every phase of the software development lifecycle:</p>
+    <div style="margin-top:16px;border:1px solid #e2e0db;border-radius:10px;overflow:hidden">
+      <div class="bob-row">
+        <div class="bob-phase">Architecture</div>
+        <div class="bob-desc">Generated the full technical specification (docs/SPEC.md) — ML algorithms, actuarial formulas, API contracts, input/output schemas, and data flow architecture.</div>
+      </div>
+      <div class="bob-row">
+        <div class="bob-phase">Backend Engineering</div>
+        <div class="bob-desc">Built all five FastAPI engine modules from scratch — clinical_ml.py, underwriting.py, fraud.py, reserving.py, rag_policy.py — with training data, model fitting, and inference logic.</div>
+      </div>
+      <div class="bob-row">
+        <div class="bob-phase">Bug Diagnosis</div>
+        <div class="bob-desc">Identified and fixed critical crash: index-out-of-bounds on proba[2] caused by missing High-risk class in training data. Diagnosed conflicting imports and sys.path hacks in main.py.</div>
+      </div>
+      <div class="bob-row">
+        <div class="bob-phase">Performance</div>
+        <div class="bob-desc">Fixed 30–60s RAG cold-start by implementing background thread preload via threading.Lock(), _ready flag, and FastAPI lifespan startup event.</div>
+      </div>
+      <div class="bob-row">
+        <div class="bob-phase">Frontend</div>
+        <div class="bob-desc">Built the complete Next.js 15 TypeScript dashboard — 6-tab interface (About, Health, Pricing, Fraud, IBNR, Policy), professional light theme, form validation, error states.</div>
+      </div>
+      <div class="bob-row">
+        <div class="bob-phase">Deployment</div>
+        <div class="bob-desc">Created Railway Procfile, railway.toml, nixpacks.toml. Diagnosed faiss-cpu Linux build failure. Wired NEXT_PUBLIC_API_URL env variable for production/local switching.</div>
+      </div>
+      <div class="bob-row">
+        <div class="bob-phase">Documentation</div>
+        <div class="bob-desc">Authored README with About, Problem, Solution, Quick Start, and API Reference. Updated SPEC.md with all engine changes, startup sequence, and production path table.</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-num">Section 08</div>
+    <h2>Live Links &amp; Repository</h2>
+    <div class="grid3">
+      <div class="card green">
+        <h4>Backend API</h4>
+        <p style="word-break:break-all;font-family:monospace;font-size:11px">https://afyarisk-engine-production.up.railway.app</p>
+      </div>
+      <div class="card green">
+        <h4>API Documentation</h4>
+        <p style="word-break:break-all;font-family:monospace;font-size:11px">https://afyarisk-engine-production.up.railway.app/docs</p>
+      </div>
+      <div class="card green">
+        <h4>GitHub Repository</h4>
+        <p style="word-break:break-all;font-family:monospace;font-size:11px">https://github.com/gitaukennedy/afyarisk-engine</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-footer">
+    AfyaRisk 2.0  —  Hackathon Submission 2025  —  Built with IBM Bob  —  Prototype, not certified actuarial advice
+    <br /><br />Made with IBM Bob
+  </div>
+
+</div>
+</body>
+</html>
