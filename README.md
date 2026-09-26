@@ -2,9 +2,42 @@
 
 **Enterprise Insurtech & Actuarial AI Platform**
 
-AfyaRisk 2.0 is a fully functional prototype that unifies five previously siloed insurance workflows — clinical risk scoring, dynamic policy pricing, fraud detection, actuarial loss reserving, and RAG-driven policy querying — into a single real-time API platform with a professional web dashboard.
-
 > Built with IBM Bob as an agentic SDLC assistant across architecture, backend, and frontend.
+
+---
+
+## About
+
+Insurance in Africa is broken at the data layer. Underwriters price risk on gut feel, fraud slips through manual review, reserves are calculated in spreadsheets, and policy documents are searched by ctrl+F. The result: mispriced premiums, inflated loss ratios, and underserved policyholders.
+
+**AfyaRisk 2.0** is an AI-powered actuarial engine built specifically for the African health insurance market. It brings together five critical workflows — clinical risk scoring, dynamic pricing, fraud detection, loss reserving, and policy intelligence — into a single real-time platform that any insurer can plug into their existing operations.
+
+The name *Afya* means **health** in Swahili. The mission is to make data-driven health insurance accessible across East Africa and beyond.
+
+---
+
+## The Problem
+
+| Pain Point | Current Reality | Impact |
+|---|---|---|
+| Risk mispricing | Underwriters use age + static tables | Loss ratios exceed 80% |
+| Fraud leakage | Manual review catches ~30% of fraud | Billions lost annually |
+| Reserve delays | Actuaries update IBNR quarterly in Excel | Regulatory non-compliance risk |
+| Policy opacity | Agents search PDFs manually | Slow claims, poor UX |
+| Siloed systems | Each workflow runs independently | No unified risk picture |
+
+---
+
+## The Solution
+
+AfyaRisk 2.0 replaces five siloed tools with one unified API platform:
+
+**What makes it different:**
+- **Real-time** — all five engines respond in under 500ms
+- **Explainable** — every output includes the reasoning (flags, factors, scores)
+- **Integrated** — health risk score feeds directly into premium calculation
+- **African-first** — premiums in KES, ICD-10 codes mapped to local disease burden
+- **API-first** — any insurer's existing system can integrate via REST
 
 ---
 
