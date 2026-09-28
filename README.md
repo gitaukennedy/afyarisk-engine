@@ -2,8 +2,8 @@
 
 **Enterprise Insurtech & Actuarial AI Platform**
 
-> Built with IBM Bob as an agentic SDLC assistant across architecture, backend, and frontend.
-
+> Built BY ME AND  IBM Bob as an agentic SDLC assistant across architecture, backend, and frontend.
+IF YOU SEEING THIS I DID'NT WIN THE HACKTHON
 ---
 
 ## About
