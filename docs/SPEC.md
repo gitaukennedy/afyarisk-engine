@@ -3,7 +3,7 @@
 **Version:** 2.0.0  
 **Classification:** Enterprise Insurtech & Actuarial AI Platform  
 **Author:** AfyaRisk Engineering Team  
-**Date:** 2025  
+**Date:** 2026  
 **Status:** Hackathon Prototype — Fully Functional
 
 ---
